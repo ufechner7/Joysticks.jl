@@ -1,4 +1,4 @@
-name = "Joystick"
+name = "Joysticks"
 uuid = "82f05805-4863-42dc-b1a7-0852bd62c632"
 authors = ["Uwe Fechner <fechner@aenarete.eu> and contributors"]
 version = "0.1.0"
