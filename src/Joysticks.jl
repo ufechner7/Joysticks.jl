@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. =#
 
-module Joystick
+module Joysticks
 
 export JSEvents, JSEvent, JSAxisState                     # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
@@ -62,11 +62,16 @@ function JSAxisState()
 end
 
 function open_joystick(filename = "/dev/input/js0")
-    file = open(filename, "r+")
-    device = JSDevice(file, fd(file), 0, 0)
-    device.axis_count = axis_count(device) 
-    device.button_count = button_count(device)
-    device
+    if  Sys.islinux()
+        file = open(filename, "r+")
+        device = JSDevice(file, fd(file), 0, 0)
+        device.axis_count = axis_count(device) 
+        device.button_count = button_count(device)
+        return device
+    else
+        error("Currently Joystick.jl supports only Linux!")
+        nothing
+    end
 end
 
 function axis_count(js::JSDevice)

@@ -1,4 +1,4 @@
-using Joystick
+using Joysticks
 
 jsdevice = open_joystick()
 jsaxes   = JSAxisState()
