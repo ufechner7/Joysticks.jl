@@ -6,7 +6,7 @@ for Windows and Mac welcome!
 ## Installation
 ```julia
 using Pkg
-pkg"add https://github.com/ufechner7/Joystick.jl"
+pkg"add https://github.com/ufechner7/Joysticks.jl"
 ```
 
 ## Constants
