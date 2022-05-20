@@ -1,24 +1,23 @@
 module Joystick
 
-using Setfield
+export JSEvents, JSAxisState                              # types
+export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
+export open_joystick, read_event, axis_state!             # functions
 
-export JSEvents, JSAxisState                                            # types
-export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT                    # constants
-export open_joystick, axis_count, button_count, read_event, axis_state! # functions
-
-const JSIOCGAXES = UInt(2147576337)
+const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
 
 @enum JSEvents begin
     JS_EVENT_BUTTON = 0x1
-    JS_EVENT_AXIS = 0x02
-    JS_EVENT_INIT = 0x80
+    JS_EVENT_AXIS   = 0x02
+    JS_EVENT_INIT   = 0x80
 end
 
 mutable struct JSDevice
     device::IOStream
     fd::Int32
     axis_count::Int32
+    button_count::Int32
 end
 
 struct JSEvent
@@ -42,9 +41,10 @@ end
 
 function open_joystick(filename = "/dev/input/js0")
     file = open(filename, "r+")
-    device = JSDevice(file, fd(file), 0)
+    device = JSDevice(file, fd(file), 0, 0)
     device.axis_count = axis_count(device) 
-    return device
+    device.button_count = button_count(device)
+    device
 end
 
 function axis_count(js::JSDevice)
@@ -82,9 +82,11 @@ function axis_state!(axes::JSAxisState, event::JSEvent)
     elseif axis == 4
         axes.u = event.value
     elseif axis == 5
+        axes.v = event.value
+    elseif axis == 6
         axes.w = event.value
     end
-    return axis
+    axis
 end
 
 end

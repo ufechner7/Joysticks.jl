@@ -1,9 +1,7 @@
 using Joystick
 
-
 jsdevice = open_joystick()
-
-jsaxes = JSAxisState()
+jsaxes   = JSAxisState()
 
 while (true)
     event = read_event(jsdevice)
