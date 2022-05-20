@@ -2,7 +2,9 @@ module Joystick
 
 using Setfield
 
-export open_joystick, axis_count, button_count, read_event, axis_state, JSEvents, JSAxisState
+export JSEvents, JSAxisState                                           # types
+export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT                   # constants
+export open_joystick, axis_count, button_count, read_event, axis_state # functions
 
 const JSIOCGAXES = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
@@ -65,9 +67,9 @@ function axis_state(event::JSEvent, axes::JSAxis)
     axis = event.number ÷ 2
     if axis < 3
         if event.number % 2 == 0
-            axes = @set axes[axis].x = event.value
+            axes = @set axes[axis+1].x = event.value
         else
-            axes = @set axes[axis].y = event.value
+            axes = @set axes[axis+1].y = event.value
         end
     end
 

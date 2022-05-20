@@ -7,13 +7,15 @@ jsaxes = ntuple(i->JSAxisState(0,0), 3)
 
 while (true)
     event = read_event(jsdevice)
-    isnothing(event) || break
-    if event.type == Int(JS_EVENT_BUTTON)
-        println("Button ", event.number, " ", event.value != 0 ? "pressed" : "released")
-    elseif event.type == Int(JS_EVENT_AXIS)
-        jsaxis, axes = axis_state(event, axes)
-        if axis < 3
-            println("Axis ", axis, " at (", axes[axis].x, ", ", axes[axis].y, ")")
+    if ! isnothing(event) 
+        if event.type == Int(JS_EVENT_BUTTON)
+            println("Button ", event.number, " ", event.value != 0 ? "pressed" : "released")
+        elseif event.type == Int(JS_EVENT_AXIS)
+            axis, axes = axis_state(event, jsaxes)
+            if axis < 3
+                println("axis: ", axis)
+                # println("Axis ", axes, " at (", axes[axis+1].x, ", ", axes[axis+1].y, ")")
+            end
         end
     end
 end
