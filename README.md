@@ -46,7 +46,7 @@ const jsaxes   = JSAxisState()
 
 while (true)
     event = read_event(jsdevice)
-    if ! isnothing(event) 
+    if ! isnothing(event)
         if event.type == Int(JS_EVENT_BUTTON)
             println("Button ", event.number, " ", event.value != 0 ? "pressed" : "released")
         elseif event.type == Int(JS_EVENT_AXIS)

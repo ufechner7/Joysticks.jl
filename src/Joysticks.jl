@@ -65,7 +65,7 @@ function open_joystick(filename = "/dev/input/js0")
     if  Sys.islinux()
         file = open(filename, "r+")
         device = JSDevice(file, fd(file), 0, 0)
-        device.axis_count = axis_count(device) 
+        device.axis_count = axis_count(device)
         device.button_count = button_count(device)
         return device
     else
