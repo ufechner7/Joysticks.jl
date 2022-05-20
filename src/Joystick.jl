@@ -30,7 +30,7 @@ struct JSAxisState
     y::Int16
 end
 
-const JSAxis = NTuple{3,JSAxisState}
+const JSAxis = NTuple{3, JSAxisState}
 
 function open_joystick(filename = "/dev/input/js0")
     file = open(filename, "r+")
@@ -53,7 +53,7 @@ function button_count(js::JSDevice)
     Int64(buttons[])
 end
 
-function read_event(js::JoystickDevice)
+function read_event(js::JSDevice)
     event = read(js.device, sizeof(JSEvent); all = false)
     if sizeof(event) != sizeof(JSEvent)
         return nothing
