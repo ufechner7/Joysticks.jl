@@ -22,7 +22,7 @@ SOFTWARE. =#
 
 module Joystick
 
-export JSEvents, JSAxisState                              # types
+export JSEvents, JSEvent, JSAxisState                     # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
 export open_joystick, read_event, axis_state!             # functions
 

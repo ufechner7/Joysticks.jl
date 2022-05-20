@@ -1,6 +1,7 @@
-# Joystick
+# Joysticks
 
-Joystick driver for Julia, for now only on Linux.
+Joystick drivers for Julia, for now only on Linux. Contributions
+for Windows and Mac welcome!
 
 ## Installation
 ```julia
@@ -15,7 +16,7 @@ JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT
 
 ## Types
 ```
-JSEvents, JSAxisState
+JSEvent, JSEvents, JSAxisState
 ```
 
 ## Functions
