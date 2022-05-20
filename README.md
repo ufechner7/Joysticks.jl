@@ -36,7 +36,7 @@ button_count = jsd.button_count
 println(axis_count, " ", button_count)
 ```
 
-Examples for an example how to print all events:
+Example for printing all events:
 ```julia
 using Joystick
 
