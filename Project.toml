@@ -3,6 +3,9 @@ uuid = "82f05805-4863-42dc-b1a7-0852bd62c632"
 authors = ["Uwe Fechner <fechner@aenarete.eu> and contributors"]
 version = "0.1.0"
 
+[deps]
+Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
+
 [compat]
 julia = "1"
 

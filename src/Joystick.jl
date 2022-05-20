@@ -1,54 +1,77 @@
 module Joystick
 
-export open_joystick, get_axis_count, get_button_count
+using Setfield
 
-const JSIOCGAXES    = 2147576337
-const JSIOCGBUTTONS = 2147576338
+export open_joystick, axis_count, button_count, read_event, axis_state, JSEvents
 
-function open_joystick(filename="/dev/input/js0")
-   file = open(filename,"r+")
-   Cint(fd(file))
+const JSIOCGAXES = UInt(2147576337)
+const JSIOCGBUTTONS = UInt(2147576338)
+
+@enum JSEvents begin
+    JS_EVENT_BUTTON = 0x1
+    JS_EVENT_AXIS = 0x02
+    JS_EVENT_INIT = 0x80
 end
 
-function get_axis_count(fd::Cint)
+struct JSDevice
+    device::IOStream
+    fd::Int32
+end
+
+struct JSEvent
+    time::UInt32
+    value::Int16
+    type::UInt8
+    number::UInt8
+end
+
+struct JSAxisState
+    x::Int16
+    y::Int16
+end
+
+const JSAxis = NTuple{3,JSAxisState}
+
+function open_joystick(filename = "/dev/input/js0")
+    file = open(filename, "r+")
+    JSDevice(file, fd(file))
+end
+
+function axis_count(js::JSDevice)
     axes = Ref{UInt8}()
-    if @ccall(ioctl(fd::Cint, JSIOCGAXES::Culong; axes::Ref{UInt8})::Cint) == -1
+    if @ccall(ioctl(js.fd::Cint, JSIOCGAXES::Culong; axes::Ref{UInt8})::Cint) == -1
         return -1
     end
     Int64(axes[])
 end
 
-function get_button_count(fd::Cint)
+function button_count(js::JSDevice)
     buttons = Ref{UInt8}()
-    if @ccall(ioctl(fd::Cint, JSIOCGBUTTONS::Culong; buttons::Ref{UInt8})::Cint) == -1
+    if @ccall(ioctl(js.fd::Cint, JSIOCGBUTTONS::Culong; buttons::Ref{UInt8})::Cint) == -1
         return -1
     end
     Int64(buttons[])
 end
 
-# /**
-#  * Returns the number of buttons on the controller or 0 if an error occurs.
-#  */
-# size_t get_button_count(int fd)
-# {
-#     __u8 buttons;
-#     if (ioctl(fd, JSIOCGBUTTONS, &buttons) == -1)
-#         return 0;
+function read_event(js::JoystickDevice)
+    event = read(js.device, sizeof(JSEvent); all = false)
+    if sizeof(event) != sizeof(JSEvent)
+        return nothing
+    end
+    reinterpret(JSEvent, event)[]
+end
 
-#     return buttons;
-# }
+function axis_state(event::JSEvent, axes::JSAxis)
+    axis = event.number ÷ 2
+    if axis < 3
+        if event.number % 2 == 0
+            axes = @set axes[axis].x = event.value
+        else
+            axes = @set axes[axis].y = event.value
+        end
+    end
 
-# int read_event(int fd, struct js_event *event)
-# {
-#     ssize_t bytes;
-
-#     bytes = read(fd, event, sizeof(*event));
-
-#     if (bytes == sizeof(*event))
-#         return 0;
-
-#     /* Error, could not read full event. */
-#     return -1;
-# }
+    return axis, axes
+end
 
 end
