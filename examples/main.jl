@@ -3,7 +3,7 @@ using Joystick
 
 jsdevice = open_joystick()
 
-jsaxes = ntuple(i->JSAxisState(0,0), 3)
+jsaxes = JSAxisState()
 
 while (true)
     event = read_event(jsdevice)
@@ -11,10 +11,10 @@ while (true)
         if event.type == Int(JS_EVENT_BUTTON)
             println("Button ", event.number, " ", event.value != 0 ? "pressed" : "released")
         elseif event.type == Int(JS_EVENT_AXIS)
-            axis, axes = axis_state(event, jsaxes)
-            if axis < 3
+            axis = axis_state!(jsaxes, event)
+            if axis <= 6
                 println("axis: ", axis)
-                # println("Axis ", axes, " at (", axes[axis+1].x, ", ", axes[axis+1].y, ")")
+                println(jsaxes)
             end
         end
     end
