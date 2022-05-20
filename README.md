@@ -41,8 +41,8 @@ Example for printing all events:
 ```julia
 using Joystick
 
-jsdevice = open_joystick()
-jsaxes   = JSAxisState()
+const jsdevice = open_joystick()
+const jsaxes   = JSAxisState()
 
 while (true)
     event = read_event(jsdevice)
