@@ -2,7 +2,7 @@ module Joystick
 
 using Setfield
 
-export open_joystick, axis_count, button_count, read_event, axis_state, JSEvents
+export open_joystick, axis_count, button_count, read_event, axis_state, JSEvents, JSAxisState
 
 const JSIOCGAXES = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
