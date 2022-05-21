@@ -61,13 +61,41 @@ function JSAxisState()
     JSAxisState(0, 0, 0, 0, 0, 0)
 end
 
+mutable struct JSState
+    x::Float64
+    y::Float64
+    z::Float64
+    u::Float64
+    v::Float64
+    w::Float64
+end
+function JSState()
+    JSState(0, 0, 0, 0, 0, 0)
+end
+
+# read all axis of the joystick and update jsaxis
+function read_jsaxis!(js::JSDevice, jsaxis::JSAxisState)
+    while (true)
+        event = read_event(js)
+        if isnothing(event) break end
+        if event.type == Int(JS_EVENT_AXIS)
+            axis_state!(jsaxis, event)
+        end
+    end
+end
+
 function open_joystick(filename = "/dev/input/js0")
     if  Sys.islinux()
-        file = open(filename, "r+")
-        device = JSDevice(file, fd(file), 0, 0)
-        device.axis_count = axis_count(device) 
-        device.button_count = button_count(device)
-        return device
+        if ispath(filename)
+            file = open(filename, "r+")
+            device = JSDevice(file, fd(file), 0, 0)
+            device.axis_count = axis_count(device) 
+            device.button_count = button_count(device)
+            return device
+        else
+            println("ERROR: The device $filename does not exist!")
+            return nothing
+        end
     else
         error("Currently Joystick.jl supports only Linux!")
         nothing
