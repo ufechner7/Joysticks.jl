@@ -25,6 +25,7 @@ module Joysticks
 export JSEvents, JSEvent, JSAxisState                     # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
 export open_joystick, read_event, axis_state!             # functions
+export async_read_jsaxis!                                 # high level interface
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
@@ -79,12 +80,13 @@ end
 function async_read_jsaxis!(js::JSDevice, jsaxis::JSAxisState)
     @async while true
         event = read_event(js)
-        # println(event)
-        if isnothing(event) break end
-        if event.type == Int(JS_EVENT_AXIS)
-            axis_state!(jsaxis, event)
+        if ! isnothing(event)
+            if event.type == Int(JS_EVENT_AXIS)
+                axis_state!(jsaxis, event)
+            end
+        else
+            sleep(0.001)
         end
-        sleep(0.001)
     end
 end
 
