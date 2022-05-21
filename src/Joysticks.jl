@@ -91,7 +91,7 @@ end
 function open_joystick(filename = "/dev/input/js0")
     if  Sys.islinux()
         if ispath(filename)
-            jfd = ccall(:open, Cint, (Cstring, Cint), "/dev/input/js0", O_RDONLY|O_NONBLOCK)
+            jfd = ccall(:open, Cint, (Cstring, Cint), filename, O_RDONLY|O_NONBLOCK)
             device = JSDevice(filename, jfd, 0, 0)
             device.axis_count = axis_count(device) 
             device.button_count = button_count(device)
