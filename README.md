@@ -61,3 +61,25 @@ while (true)
 end
 ```
 
+## High level interface
+```julia
+using Joysticks
+
+const js       = open_joystick()
+const jsaxis   = JSState()
+
+async_read_jsaxis!(js, jsaxis)
+
+while true
+    println(jsaxis)
+    sleep(0.05)
+end
+```
+After you called the function `async_read_jsaxis!` the struct
+jsaxis will be updated every milli second and will automatically
+reflect the state of the (max) 6 axis. 
+
+The values are of type Float64 in the range of -1.00 to 1.00.
+
+The members of the struct are x, y, z and u, v, w.
+
