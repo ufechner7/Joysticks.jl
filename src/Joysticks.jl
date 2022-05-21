@@ -25,7 +25,7 @@ module Joysticks
 export JSEvents, JSEvent, JSAxisState, JSState            # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
 export open_joystick, read_event, axis_state!             # functions
-export async_read_jsaxis!                                 # high level interface
+export async_read_jsaxes!                                 # high level interface
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)

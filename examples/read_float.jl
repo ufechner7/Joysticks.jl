@@ -3,7 +3,7 @@ using Joysticks
 const js       = open_joystick()
 const jsaxis   = JSState()
 
-async_read_jsaxis!(js, jsaxis)
+async_read_jsaxes!(js, jsaxis)
 
 try
     println("Press CTRL + C to terminate!")
