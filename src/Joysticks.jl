@@ -22,7 +22,7 @@ SOFTWARE. =#
 
 module Joysticks
 
-export JSEvents, JSEvent, JSAxisState                     # types
+export JSEvents, JSEvent, JSAxisState, JSState            # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
 export open_joystick, read_event, axis_state!             # functions
 export async_read_jsaxis!                                 # high level interface
@@ -31,6 +31,7 @@ const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
 const O_RDONLY = 0
 const O_NONBLOCK = 2048
+const MAX_VALUE = 32767
 
 @enum JSEvents begin
     JS_EVENT_BUTTON = 0x1
@@ -77,7 +78,7 @@ function JSState()
 end
 
 # read all axis of the joystick and update jsaxis
-function async_read_jsaxis!(js::JSDevice, jsaxis::JSAxisState)
+function async_read_jsaxis!(js::JSDevice, jsaxis)
     @async while true
         event = read_event(js)
         if ! isnothing(event)
@@ -147,6 +148,24 @@ function axis_state!(axes::JSAxisState, event::JSEvent)
         axes.v = event.value
     elseif axis == 6
         axes.w = event.value
+    end
+    axis
+end
+
+function axis_state!(axes::JSState, event::JSEvent)
+    axis = event.number+1
+    if axis == 1
+        axes.x = event.value/MAX_VALUE
+    elseif axis == 2
+        axes.y = event.value/MAX_VALUE
+    elseif axis == 3
+        axes.z = event.value/MAX_VALUE
+    elseif axis == 4
+        axes.u = event.value/MAX_VALUE
+    elseif axis == 5
+        axes.v = event.value/MAX_VALUE
+    elseif axis == 6
+        axes.w = event.value/MAX_VALUE
     end
     axis
 end
