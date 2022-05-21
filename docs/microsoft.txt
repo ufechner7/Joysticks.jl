@@ -1,0 +1,35 @@
+The .net MDX has the following members in the JoystickState struct:
+
+ARx X-axis angular acceleration.
+ARy Y-axis angular acceleration.
+ARz Z-axis angular acceleration.
+AX X-axis acceleration.
+AY Y-axis acceleration.
+AZ Z-axis acceleration.
+FRx X-axis torque.
+FRy Y-axis torque.
+FRz Z-axis torque.
+FX X-axis force.
+FY Y-axis force.
+FZ Z-axis force.
+Rx X-axis rotation. If the joystick does not have this axis, the value is 0.
+Ry Y-axis rotation. If the joystick does not have this axis, the value is 0.
+Rz Z-axis rotation (often called the rudder). If the joystick does not have this axis, the value is 0.
+VRx X-axis angular velocity.
+VRy Y-axis angular velocity.
+VRz Z-axis angular velocity.
+VX X-axis velocity.
+VY Y-axis velocity.
+VZ Z-axis velocity.
+X X-axis, usually the left-right movement of a stick.
+Y Y-axis, usually the forward-backward movement of a stick.
+Z Z-axis, often the throttle control. If the joystick does not have this axis, the value is 0.
+
+
+Additional methods:
+GetASlider Extra axis accelerations.
+GetButtons Array of buttons. The high-order bit of the byte is set if the corresponding button is down, and clear if the button is up or does not exist.
+GetFSlider Extra axis forces.
+GetPointOfView Direction controllers, such as point-of-view hats. The position is indicated in hundredths of a degree clockwise from north (away from the user). The center position is normally reported as -1; but see Remarks. For indicators that have only five positions, the value for a controller is -1, 0, 9,000, 18,000, or 27,000.
+GetSlider Two additional axes, formerly called the u-axis and v-axis, whose semantics depend on the joystick. Use the Inputdevice9Getobjectinfo method to obtain semantic information about these values.
+GetVSlider Extra axis velocities. 
