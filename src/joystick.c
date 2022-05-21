@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     else
         device = "/dev/input/js0";
 
-    js = open(device, O_RDONLY);
+    js = open(device, O_RDONLY | O_NONBLOCK);
 
     printf("JSIOCGAXES: %lu\n", JSIOCGAXES);
 
@@ -112,23 +112,27 @@ int main(int argc, char *argv[])
         perror("Could not open joystick");
 
     /* This loop will exit if the controller is unplugged. */
-    while (read_event(js, &event) == 0) {
-        switch (event.type) {
-            case JS_EVENT_BUTTON:
-                printf("Button %u %s\n", event.number,
-                       event.value ? "pressed" : "released");
-                break;
-            case JS_EVENT_AXIS:
-                axis = get_axis_state(&event, axes);
-                if (axis < 3)
-                    printf("Axis %zu at (%6d, %6d)\n", axis, axes[axis].x,
-                           axes[axis].y);
-                break;
-            default:
-                /* Ignore init events. */
-                break;
+    while (JS_TRUE) {
+        if (read_event(js, &event) == 0) {
+            switch (event.type) {
+                case JS_EVENT_BUTTON:
+                    printf("Button %u %s\n", event.number,
+                        event.value ? "pressed" : "released");
+                    break;
+                case JS_EVENT_AXIS:
+                    axis = get_axis_state(&event, axes);
+                    if (axis < 3)
+                        printf("Axis %zu at (%6d, %6d)\n", axis, axes[axis].x,
+                            axes[axis].y);
+                    break;
+                default:
+                    /* Ignore init events. */
+                    break;
+            }
+        } else {
+            usleep(50000);
         }
-
+        printf("->");
         fflush(stdout);
     }
 
