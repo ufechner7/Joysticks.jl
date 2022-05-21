@@ -78,12 +78,12 @@ function JSState()
 end
 
 # read all axis of the joystick and update jsaxis
-function async_read_jsaxis!(js::JSDevice, jsaxis)
+function async_read_jsaxes!(js::JSDevice, jsaxes)
     @async while true
         event = read_event(js)
         if ! isnothing(event)
             if event.type == Int(JS_EVENT_AXIS)
-                axis_state!(jsaxis, event)
+                axis_state!(jsaxes, event)
             end
         else
             sleep(0.001)

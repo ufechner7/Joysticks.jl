@@ -25,6 +25,8 @@ JSEvent, JSEvents, JSAxisState
 open_joystick(filename="/dev/input/js0")
 read_event(js::JSDevice)
 axis_state!(axes::JSAxisState, event::JSEvent)
+axis_state!(axes::JSState, event::JSEvent)
+async_read_jsaxis!(js::JSDevice, jsaxes)
 ```
 
 ## Example
@@ -66,16 +68,16 @@ end
 using Joysticks
 
 const js       = open_joystick()
-const jsaxis   = JSState()
+const jsaxes   = JSState()
 
-async_read_jsaxis!(js, jsaxis)
+async_read_jsaxes!(js, jsaxes)
 
 while true
-    println(jsaxis)
+    println(jsaxes)
     sleep(0.05)
 end
 ```
-After you called the function `async_read_jsaxis!` the struct
+After you called the function `async_read_jsaxes!` the struct
 jsaxis will be updated every milli second and will automatically
 reflect the state of the (max) 6 axis. 
 
@@ -83,3 +85,6 @@ The values are of type Float64 in the range of -1.00 to 1.00.
 
 The members of the struct are x, y, z and u, v, w.
 
+
+## Remark
+The word `axes` is the plural of `axis`.
