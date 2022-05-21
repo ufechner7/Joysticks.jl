@@ -78,7 +78,7 @@ while true
 end
 ```
 After you called the function `async_read_jsaxes!` the struct
-jsaxis will be updated every milli second and will automatically
+jsaxes will be updated every milli-second and will automatically
 reflect the state of the (max) 6 axis. 
 
 The values are of type Float64 in the range of -1.00 to 1.00.
