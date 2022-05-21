@@ -16,14 +16,15 @@ try
                     println("axis: $axis, ", jsaxes)
                 end
             end
+        else
+            sleep(0.01)
         end
-        sleep(0.001)
     end
 catch e
     if typeof(e) <: InterruptException
         println("Terminated program!")
     else
-        rethrow(e)
+        rethrow()
     end
 end
 

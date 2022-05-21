@@ -28,6 +28,8 @@ export open_joystick, read_event, axis_state!             # functions
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
+const O_RDONLY = 0
+const O_NONBLOCK = 2048
 
 @enum JSEvents begin
     JS_EVENT_BUTTON = 0x1
@@ -36,7 +38,7 @@ const JSIOCGBUTTONS = UInt(2147576338)
 end
 
 mutable struct JSDevice
-    device::IOStream
+    device::String
     fd::Int32
     axis_count::Int32
     button_count::Int32
@@ -74,21 +76,23 @@ function JSState()
 end
 
 # read all axis of the joystick and update jsaxis
-function read_jsaxis!(js::JSDevice, jsaxis::JSAxisState)
-    while (true)
+function async_read_jsaxis!(js::JSDevice, jsaxis::JSAxisState)
+    @async while true
         event = read_event(js)
+        # println(event)
         if isnothing(event) break end
         if event.type == Int(JS_EVENT_AXIS)
             axis_state!(jsaxis, event)
         end
+        sleep(0.001)
     end
 end
 
 function open_joystick(filename = "/dev/input/js0")
     if  Sys.islinux()
         if ispath(filename)
-            file = open(filename, "r+")
-            device = JSDevice(file, fd(file), 0, 0)
+            jfd = ccall(:open, Cint, (Cstring, Cint), "/dev/input/js0", O_RDONLY|O_NONBLOCK)
+            device = JSDevice(filename, jfd, 0, 0)
             device.axis_count = axis_count(device) 
             device.button_count = button_count(device)
             return device
@@ -119,8 +123,9 @@ function button_count(js::JSDevice)
 end
 
 function read_event(js::JSDevice)
-    event = read(js.device, sizeof(JSEvent); all = false)
-    if sizeof(event) != sizeof(JSEvent)
+    event = Vector{UInt8}(undef, sizeof(JSEvent))
+    res = ccall(:read, Cssize_t, (Cint, Ptr{Cuchar}, Csize_t), js.fd, event, sizeof(JSEvent))
+    if res == -1    
         return nothing
     end
     reinterpret(JSEvent, event)[]
