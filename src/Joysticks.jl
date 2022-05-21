@@ -1,6 +1,6 @@
 #= MIT License
 
-Copyright (c) 2022 Uwe Fechner, Suavesito-Olimpiada
+Copyright (c) 2022 Uwe Fechner, José Joaquín Zubieta Rico
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +93,7 @@ function open_joystick(filename = "/dev/input/js0")
         if ispath(filename)
             jfd = ccall(:open, Cint, (Cstring, Cint), filename, O_RDONLY|O_NONBLOCK)
             device = JSDevice(filename, jfd, 0, 0)
-            device.axis_count = axis_count(device) 
+            device.axis_count = axis_count(device)
             device.button_count = button_count(device)
             return device
         else
