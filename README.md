@@ -26,7 +26,7 @@ open_joystick(filename="/dev/input/js0")
 read_event(js::JSDevice)
 axis_state!(axes::JSAxisState, event::JSEvent)
 axis_state!(axes::JSState, event::JSEvent)
-async_read_jsaxis!(js::JSDevice, jsaxes)
+async_read_jsaxes!(js::JSDevice, jsaxes)
 ```
 
 ## Example
