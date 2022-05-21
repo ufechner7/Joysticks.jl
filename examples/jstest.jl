@@ -1,13 +1,13 @@
 using Joysticks
 
-jsdevice = open_joystick()
-jsaxes   = JSAxisState()
+const jsdevice = open_joystick()
+const jsaxes   = JSAxisState()
 
 try
     println("Press CTRL + C to terminate!")
     while true
         event = read_event(jsdevice)
-        if ! isnothing(event) 
+        if ! isnothing(event)
             if event.type == Int(JS_EVENT_BUTTON)
                 println("Button ", event.number, " ", event.value != 0 ? "pressed" : "released")
             elseif event.type == Int(JS_EVENT_AXIS)
