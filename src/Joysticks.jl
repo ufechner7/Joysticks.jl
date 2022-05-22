@@ -27,7 +27,7 @@ using Observables
 export JSEvents, JSEvent, JSAxisState, JSButtonState, JSState # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT          # constants
 export open_joystick, read_event, axis_state!                 # functions
-export async_read_jsaxes!, async_read_jsbuttons!              # high level interface
+export async_read!                                            # high level interface
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
@@ -98,53 +98,46 @@ function JSButtonState()
 end
 
 # read all axis of the joystick and update jsaxis
-function async_read_jsaxes!(js::JSDevice, jsaxes)
+function async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
     @async while true
         event = read_event(js)
         if ! isnothing(event)
-            if event.type == Int(JS_EVENT_AXIS)
-                axis_state!(jsaxes, event)
+            if ! isnothing(jsaxes)
+                if event.type == Int(JS_EVENT_AXIS)
+                    axis_state!(jsaxes, event)
+                end
             end
-        else
-            sleep(0.002)
-        end
-    end
-end
-
-# read all axis of the joystick and update jsaxis
-function async_read_jsbuttons!(js::JSDevice, jsbuttons)
-    @async while true
-        event = read_event(js)
-        if ! isnothing(event)
-            if event.type == Int(JS_EVENT_BUTTON)
-                if event.number == 0
-                    jsbuttons.btn1[] = event.value != 0
-                elseif event.number == 1
-                    jsbuttons.btn2[] = event.value != 0
-                elseif event.number == 2
-                    jsbuttons.btn3[] = event.value != 0
-                elseif event.number == 3
-                    jsbuttons.btn4[] = event.value != 0
-                elseif event.number == 4
-                    jsbuttons.btn5[] = event.value != 0
-                elseif event.number == 5
-                    jsbuttons.btn6[] = event.value != 0
-                elseif event.number == 6
-                    jsbuttons.btn7[] = event.value != 0
-                elseif event.number == 7
-                    jsbuttons.btn8[] = event.value != 0
-                elseif event.number == 8
-                    jsbuttons.btn9[] = event.value != 0
-                elseif event.number == 9
-                    jsbuttons.btn10[] = event.value != 0
-                elseif event.number == 10
-                    jsbuttons.btn11[] = event.value != 0
-                else event.number ==11
-                    jsbuttons.btn12[] = event.value != 0
+            if ! isnothing(jsbuttons)
+                if event.type == Int(JS_EVENT_BUTTON)
+                    if event.number == 0
+                        jsbuttons.btn1[] = event.value != 0
+                    elseif event.number == 1
+                        jsbuttons.btn2[] = event.value != 0
+                    elseif event.number == 2
+                        jsbuttons.btn3[] = event.value != 0
+                    elseif event.number == 3
+                        jsbuttons.btn4[] = event.value != 0
+                    elseif event.number == 4
+                        jsbuttons.btn5[] = event.value != 0
+                    elseif event.number == 5
+                        jsbuttons.btn6[] = event.value != 0
+                    elseif event.number == 6
+                        jsbuttons.btn7[] = event.value != 0
+                    elseif event.number == 7
+                        jsbuttons.btn8[] = event.value != 0
+                    elseif event.number == 8
+                        jsbuttons.btn9[] = event.value != 0
+                    elseif event.number == 9
+                        jsbuttons.btn10[] = event.value != 0
+                    elseif event.number == 10
+                        jsbuttons.btn11[] = event.value != 0
+                    else event.number ==11
+                        jsbuttons.btn12[] = event.value != 0
+                    end
                 end
             end
         else
-            sleep(0.005)
+            sleep(0.002)
         end
     end
 end

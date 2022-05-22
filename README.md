@@ -26,8 +26,7 @@ open_joystick(filename="/dev/input/js0")
 read_event(js::JSDevice)
 axis_state!(axes::JSAxisState, event::JSEvent)
 axis_state!(axes::JSState, event::JSEvent)
-async_read_jsaxes!(js::JSDevice, jsaxes)
-async_read_jsbuttons!(js::JSDevice, jsbuttons)
+async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
 ```
 
 ## Example
@@ -71,14 +70,14 @@ using Joysticks
 const js       = open_joystick()
 const jsaxes   = JSState()
 
-async_read_jsaxes!(js, jsaxes)
+async_read!(js, jsaxes)
 
 while true
     println(jsaxes)
     sleep(0.05)
 end
 ```
-After you called the function `async_read_jsaxes!` the struct
+After you called the function `async_read!` the struct
 jsaxes will be updated every milli-second and will automatically
 reflect the state of the (max) 6 axis. 
 
@@ -93,12 +92,12 @@ using Joysticks, Observables
 const js        = open_joystick()
 const jsbuttons = JSButtonState()
 
-async_read_jsbuttons!(js, jsbuttons)
+async_read_jsbuttons!(js, nothing, jsbuttons)
 
-obs_func1 = on(jsbuttons.btn1) do val
+on(jsbuttons.btn1) do val
     if val println("Button 1 pressed!") end
 end
-obs_func2 = on(jsbuttons.btn2) do val
+on(jsbuttons.btn2) do val
     if ! val println("Button 2 released!") end
 end
 ```
