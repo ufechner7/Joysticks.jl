@@ -1,14 +1,14 @@
 using Joysticks
 
 const js       = open_joystick()
-const jsaxis   = JSAxisState()
+const jsaxes   = JSAxisState()
 
-async_read_jsaxis!(js, jsaxis)
+async_read_jsaxes!(js, jsaxes)
 
 try
     println("Press CTRL + C to terminate!")
     while true
-        println(jsaxis)
+        println(jsaxes)
         sleep(0.05)
     end
 catch e

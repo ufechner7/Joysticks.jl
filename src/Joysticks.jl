@@ -22,10 +22,12 @@ SOFTWARE. =#
 
 module Joysticks
 
-export JSEvents, JSEvent, JSAxisState, JSState            # types
-export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT      # constants
-export open_joystick, read_event, axis_state!             # functions
-export async_read_jsaxes!                                 # high level interface
+using Observables
+
+export JSEvents, JSEvent, JSAxisState, JSButtonState, JSState # types
+export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT          # constants
+export open_joystick, read_event, axis_state!                 # functions
+export async_read_jsaxes!, async_read_jsbuttons!              # high level interface
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
@@ -77,6 +79,24 @@ function JSState()
     JSState(0, 0, 0, 0, 0, 0)
 end
 
+mutable struct JSButtonState
+    btn1::Observable{Bool}
+    btn2::Observable{Bool}
+    btn3::Observable{Bool}
+    btn4::Observable{Bool}
+    btn5::Observable{Bool}
+    btn6::Observable{Bool}
+    btn7::Observable{Bool}
+    btn8::Observable{Bool}
+    btn9::Observable{Bool}
+    btn10::Observable{Bool}
+    btn11::Observable{Bool}
+    btn12::Observable{Bool}
+end
+function JSButtonState()
+    JSButtonState(false, false, false, false, false, false, false, false, false, false, false, false)
+end
+
 # read all axis of the joystick and update jsaxis
 function async_read_jsaxes!(js::JSDevice, jsaxes)
     @async while true
@@ -84,6 +104,44 @@ function async_read_jsaxes!(js::JSDevice, jsaxes)
         if ! isnothing(event)
             if event.type == Int(JS_EVENT_AXIS)
                 axis_state!(jsaxes, event)
+            end
+        else
+            sleep(0.001)
+        end
+    end
+end
+
+# read all axis of the joystick and update jsaxis
+function async_read_jsbuttons!(js::JSDevice, jsbuttons)
+    @async while true
+        event = read_event(js)
+        if ! isnothing(event)
+            if event.type == Int(JS_EVENT_BUTTON)
+                if event.number == 0
+                    jsbuttons.btn1[] = event.value != 0
+                elseif event.number == 1
+                    jsbuttons.btn2[] = event.value != 0
+                elseif event.number == 2
+                    jsbuttons.btn3[] = event.value != 0
+                elseif event.number == 3
+                    jsbuttons.btn4[] = event.value != 0
+                elseif event.number == 4
+                    jsbuttons.btn5[] = event.value != 0
+                elseif event.number == 5
+                    jsbuttons.btn6[] = event.value != 0
+                elseif event.number == 6
+                    jsbuttons.btn7[] = event.value != 0
+                elseif event.number == 7
+                    jsbuttons.btn8[] = event.value != 0
+                elseif event.number == 8
+                    jsbuttons.btn9[] = event.value != 0
+                elseif event.number == 9
+                    jsbuttons.btn10[] = event.value != 0
+                elseif event.number == 10
+                    jsbuttons.btn11[] = event.value != 0
+                else event.number ==11
+                    jsbuttons.btn12[] = event.value != 0
+                end
             end
         else
             sleep(0.001)

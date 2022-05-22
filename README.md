@@ -63,7 +63,7 @@ while (true)
 end
 ```
 
-## High level interface
+## High level interface for reading the axes
 ```julia
 using Joysticks
 
@@ -85,6 +85,28 @@ The values are of type Float64 in the range of -1.00 to 1.00.
 
 The members of the struct are x, y, z and u, v, w.
 
+## High level interface reacting on button events
+```julia
+using Joysticks, Observables
+
+const js        = open_joystick()
+const jsbuttons = JSButtonState()
+
+async_read_jsbuttons!(js, jsbuttons)
+
+obs_func1 = on(jsbuttons.btn1) do val
+    if val println("Button 1 pressed!") end
+end
+obs_func2 = on(jsbuttons.btn2) do val
+    if ! val println("Button 2 released!") end
+end
+```
+The struct jsbuttons contains 12 observables, one for each possible button. 
+Using the function `on` can be used to bind an action to a change of the
+button state. When pressed `val` is true, when release `val` is false.
+
+The function `async_read_jsbuttons!` must be called once to start the
+event loop for processing button events.
 
 ## Remark
 The word `axes` is the plural of `axis`.

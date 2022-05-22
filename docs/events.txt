@@ -1,0 +1,6 @@
+Have a look at:
+
+https://github.com/JuliaGizmos/Observables.jl
+
+and
+https://makie.juliaplots.org/stable/documentation/events/
