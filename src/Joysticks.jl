@@ -106,7 +106,7 @@ function async_read_jsaxes!(js::JSDevice, jsaxes)
                 axis_state!(jsaxes, event)
             end
         else
-            sleep(0.001)
+            sleep(0.002)
         end
     end
 end
@@ -144,7 +144,7 @@ function async_read_jsbuttons!(js::JSDevice, jsbuttons)
                 end
             end
         else
-            sleep(0.001)
+            sleep(0.005)
         end
     end
 end
