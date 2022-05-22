@@ -16,7 +16,7 @@ JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT
 
 ## Types
 ```
-JSEvent, JSEvents, JSAxisState
+JSEvent, JSEvents, JSAxisState, JSButtonState, JSState
 ```
 
 ## Functions
@@ -27,6 +27,7 @@ read_event(js::JSDevice)
 axis_state!(axes::JSAxisState, event::JSEvent)
 axis_state!(axes::JSState, event::JSEvent)
 async_read_jsaxes!(js::JSDevice, jsaxes)
+async_read_jsbuttons!(js::JSDevice, jsbuttons)
 ```
 
 ## Example
