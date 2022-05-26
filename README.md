@@ -71,14 +71,14 @@ You can then access the axes values and assign events to buttons as in the examp
 
 ## Using the second Joystick
 ### Windows and Mac
-```
+```julia
 using Joysticks, Observables
 const js        = open_joystick("", JOYSTICK_2)
 ```
 The counting starts at one.
 
 ### Linux
-```
+```julia
 using Joysticks, Observables
 const js        = open_joystick("/dev/input/js1")
 ```
@@ -86,12 +86,12 @@ The counting starts at zero.
 
 ## Reference
 ### Constants
-```
+```julia
 JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT
 ```
 
 ### Types
-```
+```julia
 JSEvent, JSEvents, JSAxisState, JSButtonState, JSState
 ```
 
