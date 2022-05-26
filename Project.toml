@@ -4,11 +4,14 @@ authors = ["Uwe Fechner <fechner@aenarete.eu> and contributors"]
 version = "0.1.2"
 
 [deps]
+GLFW = "f7f18e0c-5ee9-5ccd-a5bf-e8befd85ed98"
 Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
+GLFW = "3"
+Observables = "0.4, 0.5"
 julia = "1"
-Observables="0.4, 0.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

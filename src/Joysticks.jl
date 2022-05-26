@@ -22,12 +22,14 @@ SOFTWARE. =#
 
 module Joysticks
 
-using Observables
+using Observables, Reexport
 
 export JSEvents, JSEvent, JSAxisState, JSButtonState, JSState # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT          # constants
 export open_joystick, read_event, axis_state!                 # functions
 export async_read!                                            # high level interface
+@reexport using GLFW: JOYSTICK_1, JOYSTICK_2, JOYSTICK_3
+import GLFW
 
 const JSIOCGAXES    = UInt(2147576337)
 const JSIOCGBUTTONS = UInt(2147576338)
@@ -42,7 +44,8 @@ const MAX_VALUE = 32767
 end
 
 mutable struct JSDevice
-    device::String
+    filename::String
+    device::GLFW.Joystick
     fd::Int32
     axis_count::Int32
     button_count::Int32
@@ -142,21 +145,28 @@ function async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
     end
 end
 
-function open_joystick(filename = "/dev/input/js0")
-    if  Sys.islinux()
+function open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; useglfw=false)
+    if  Sys.islinux() && ! useglfw
         if ispath(filename)
             jfd = ccall(:open, Cint, (Cstring, Cint), filename, O_RDONLY|O_NONBLOCK)
-            device = JSDevice(filename, jfd, 0, 0)
-            device.axis_count = axis_count(device)
-            device.button_count = button_count(device)
-            return device
+            js = JSDevice(filename, device, jfd, 0, 0)
+            js.axis_count = axis_count(js)
+            js.button_count = button_count(js)
+            return js
         else
             println("ERROR: The device $filename does not exist!")
             return nothing
         end
     else
-        error("Currently Joystick.jl supports only Linux!")
-        nothing
+        if GLFW.JoystickPresent(device)
+            js = JSDevice("", device, 0, 0, 0)
+            js.axis_count = length(GLFW.GetJoystickAxes(device))
+            js.button_count = length(GLFW.GetJoystickButtons(device))
+            return js
+        else
+            println("ERROR: The device $device is not present!")
+            return nothing
+        end
     end
 end
 
