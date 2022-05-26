@@ -1,7 +1,7 @@
 using Joysticks
 
 const js       = open_joystick()
-const jsaxes   = JSAxisState()
+const jsaxes   = JSState()
 
 async_read!(js, jsaxes)
 

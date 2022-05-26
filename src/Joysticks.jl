@@ -22,7 +22,7 @@ SOFTWARE. =#
 
 module Joysticks
 
-using Observables, Reexport
+using Observables, Reexport, LinearAlgebra
 
 export JSEvents, JSEvent, JSAxisState, JSButtonState, JSState # types
 export JS_EVENT_BUTTON, JS_EVENT_AXIS, JS_EVENT_INIT          # constants
@@ -84,21 +84,32 @@ end
 function set_state!(state::JSState, axes)
     i = 1
     for axis in axes
+        ax = dead_zone(axis)
         if i == 1
-            state.x = axis
+            state.x = ax
         elseif i == 2
-            state.y = axis
+            state.y = ax
         elseif i == 3
-            state.z = axis
+            state.z = ax
         elseif i == 4
-            state.u = axis
+            state.u = ax
         elseif i == 5
-            state.v = axis
+            state.v = ax
         elseif i == 6
-            state.w = axis
+            state.w = ax
         end
         i+=1
         if i > 6 break end
+    end
+end
+
+function dead_zone(axis, deadzone=0.07)
+    if norm(axis) < deadzone
+        return zero(axis)
+    elseif axis > 0
+        return (axis - deadzone)/(1-deadzone)
+    else
+        return (axis + deadzone)/(1-deadzone)
     end
 end
 
