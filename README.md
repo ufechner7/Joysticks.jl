@@ -69,6 +69,21 @@ event loop for processing button events.
 
 You can then access the axes values and assign events to buttons as in the examples above.
 
+## Using the second Joystick
+### Windows and Mac
+```
+using Joysticks, Observables
+const js        = open_joystick("", JOYSTICK_2)
+```
+The counting starts at one.
+
+### Linux
+```
+using Joysticks, Observables
+const js        = open_joystick("/dev/input/js1")
+```
+The counting starts at zero.
+
 ## Reference
 ### Constants
 ```
@@ -83,14 +98,14 @@ JSEvent, JSEvents, JSAxisState, JSButtonState, JSState
 ### Functions
 
 ```julia
-open_joystick(filename="/dev/input/js0")
+open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; glfw=false)
 read_event(js::JSDevice)
 axis_state!(axes::JSAxisState, event::JSEvent)
 axis_state!(axes::JSState, event::JSEvent)
 async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
 ```
 
-## Example of using the low-level interface
+## Example of using the low-level interface (Linux only)
 ```julia
 using Joystick
 
