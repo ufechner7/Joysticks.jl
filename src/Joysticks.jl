@@ -178,8 +178,71 @@ function async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
             if ! isnothing(jsaxes)
                 axes = GLFW.GetJoystickAxes(js.device)
                 set_state!(jsaxes, axes)
-                sleep(0.01)
             end
+            if ! isnothing(jsbuttons)
+                buttons = GLFW.GetJoystickButtons(js.device)
+                if js.button_count >= 1  
+                    if jsbuttons.btn1[] != (buttons[1]  != 0)
+                        jsbuttons.btn1[] = (buttons[1]  != 0)
+                    end
+                end
+                if js.button_count >= 2  
+                    if jsbuttons.btn2[] != (buttons[2]  != 0)
+                        jsbuttons.btn2[] = (buttons[2]  != 0)
+                    end
+                end
+                if js.button_count >= 3  
+                    if jsbuttons.btn3[] != (buttons[3]  != 0)
+                        jsbuttons.btn3[] = (buttons[3]  != 0)
+                    end
+                end
+                if js.button_count >= 4  
+                    if jsbuttons.btn4[] != (buttons[4]  != 0)
+                        jsbuttons.btn4[] = (buttons[4]  != 0)
+                    end
+                end
+                if js.button_count >= 5  
+                    if jsbuttons.btn5[] != (buttons[5]  != 0)
+                        jsbuttons.btn5[] = (buttons[5]  != 0)
+                    end
+                end
+                if js.button_count >= 6  
+                    if jsbuttons.btn6[] != (buttons[6]  != 0)
+                        jsbuttons.btn6[] = (buttons[6]  != 0)
+                    end
+                end
+                if js.button_count >= 7  
+                    if jsbuttons.btn7[] != (buttons[7]  != 0)
+                        jsbuttons.btn7[] = (buttons[7]  != 0)
+                    end
+                end
+                if js.button_count >= 8  
+                    if jsbuttons.btn8[] != (buttons[8]  != 0)
+                        jsbuttons.btn8[] = (buttons[8]  != 0)
+                    end
+                end
+                if js.button_count >= 9  
+                    if jsbuttons.btn9[] != (buttons[9]  != 0)
+                        jsbuttons.btn9[] = (buttons[9]  != 0)
+                    end
+                end
+                if js.button_count >= 10  
+                    if jsbuttons.btn10[] != (buttons[10]  != 0)
+                        jsbuttons.btn10[] = (buttons[10]  != 0)
+                    end
+                end
+                if js.button_count >= 11 
+                    if jsbuttons.btn11[] != (buttons[11]  != 0)
+                        jsbuttons.btn11[] = (buttons[11]  != 0)
+                    end
+                end
+                if js.button_count >= 12 
+                    if jsbuttons.btn12[] != (buttons[12]  != 0)
+                        jsbuttons.btn12[] = (buttons[12]  != 0)
+                    end
+                end
+            end
+            sleep(0.01)
         end
     end
 end
