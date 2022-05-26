@@ -81,6 +81,26 @@ end
 function JSState()
     JSState(0, 0, 0, 0, 0, 0)
 end
+function set_state!(state::JSState, axes)
+    i = 1
+    for axis in axes
+        if i == 1
+            state.x = axis
+        elseif i == 2
+            state.y = axis
+        elseif i == 3
+            state.z = axis
+        elseif i == 4
+            state.u = axis
+        elseif i == 5
+            state.v = axis
+        elseif i == 6
+            state.w = axis
+        end
+        i+=1
+        if i > 6 break end
+    end
+end
 
 mutable struct JSButtonState
     btn1::Observable{Bool}
@@ -103,50 +123,58 @@ end
 # read all axis of the joystick and update jsaxis
 function async_read!(js::JSDevice, jsaxes=nothing, jsbuttons=nothing)
     @async while true
-        event = read_event(js)
-        if ! isnothing(event)
-            if ! isnothing(jsaxes)
-                if event.type == Int(JS_EVENT_AXIS)
-                    axis_state!(jsaxes, event)
-                end
-            end
-            if ! isnothing(jsbuttons)
-                if event.type == Int(JS_EVENT_BUTTON)
-                    if event.number == 0
-                        jsbuttons.btn1[] = event.value != 0
-                    elseif event.number == 1
-                        jsbuttons.btn2[] = event.value != 0
-                    elseif event.number == 2
-                        jsbuttons.btn3[] = event.value != 0
-                    elseif event.number == 3
-                        jsbuttons.btn4[] = event.value != 0
-                    elseif event.number == 4
-                        jsbuttons.btn5[] = event.value != 0
-                    elseif event.number == 5
-                        jsbuttons.btn6[] = event.value != 0
-                    elseif event.number == 6
-                        jsbuttons.btn7[] = event.value != 0
-                    elseif event.number == 7
-                        jsbuttons.btn8[] = event.value != 0
-                    elseif event.number == 8
-                        jsbuttons.btn9[] = event.value != 0
-                    elseif event.number == 9
-                        jsbuttons.btn10[] = event.value != 0
-                    elseif event.number == 10
-                        jsbuttons.btn11[] = event.value != 0
-                    else event.number ==11
-                        jsbuttons.btn12[] = event.value != 0
+        if js.filename != ""
+            event = read_event(js)
+            if ! isnothing(event)
+                if ! isnothing(jsaxes)
+                    if event.type == Int(JS_EVENT_AXIS)
+                        axis_state!(jsaxes, event)
                     end
                 end
+                if ! isnothing(jsbuttons)
+                    if event.type == Int(JS_EVENT_BUTTON)
+                        if event.number == 0
+                            jsbuttons.btn1[] = event.value != 0
+                        elseif event.number == 1
+                            jsbuttons.btn2[] = event.value != 0
+                        elseif event.number == 2
+                            jsbuttons.btn3[] = event.value != 0
+                        elseif event.number == 3
+                            jsbuttons.btn4[] = event.value != 0
+                        elseif event.number == 4
+                            jsbuttons.btn5[] = event.value != 0
+                        elseif event.number == 5
+                            jsbuttons.btn6[] = event.value != 0
+                        elseif event.number == 6
+                            jsbuttons.btn7[] = event.value != 0
+                        elseif event.number == 7
+                            jsbuttons.btn8[] = event.value != 0
+                        elseif event.number == 8
+                            jsbuttons.btn9[] = event.value != 0
+                        elseif event.number == 9
+                            jsbuttons.btn10[] = event.value != 0
+                        elseif event.number == 10
+                            jsbuttons.btn11[] = event.value != 0
+                        else event.number ==11
+                            jsbuttons.btn12[] = event.value != 0
+                        end
+                    end
+                end
+            else
+                sleep(0.005)
             end
         else
-            sleep(0.002)
+            if ! isnothing(jsaxes)
+                axes = GLFW.GetJoystickAxes(js.device)
+                set_state!(jsaxes, axes)
+                sleep(0.01)
+            end
         end
     end
 end
 
-function open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; useglfw=false)
-    if  Sys.islinux() && ! useglfw
+function open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; glfw=false)
+    if  Sys.islinux() && ! glfw
         if ispath(filename)
             jfd = ccall(:open, Cint, (Cstring, Cint), filename, O_RDONLY|O_NONBLOCK)
             js = JSDevice(filename, device, jfd, 0, 0)
@@ -160,6 +188,7 @@ function open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; useglfw=f
     else
         if GLFW.JoystickPresent(device)
             js = JSDevice("", device, 0, 0, 0)
+            js.filename=""
             js.axis_count = length(GLFW.GetJoystickAxes(device))
             js.button_count = length(GLFW.GetJoystickButtons(device))
             return js
@@ -171,22 +200,31 @@ function open_joystick(filename = "/dev/input/js0", device=JOYSTICK_1; useglfw=f
 end
 
 function axis_count(js::JSDevice)
-    axes = Ref{UInt8}()
-    if @ccall(ioctl(js.fd::Cint, JSIOCGAXES::Culong; axes::Ref{UInt8})::Cint) == -1
-        return -1
+    if js.filename != ""
+        axes = Ref{UInt8}()
+        if @ccall(ioctl(js.fd::Cint, JSIOCGAXES::Culong; axes::Ref{UInt8})::Cint) == -1
+            return -1
+        end
+            return Int64(axes[])
+    else
+        return js.axis_count
     end
-    Int64(axes[])
 end
 
 function button_count(js::JSDevice)
-    buttons = Ref{UInt8}()
-    if @ccall(ioctl(js.fd::Cint, JSIOCGBUTTONS::Culong; buttons::Ref{UInt8})::Cint) == -1
-        return -1
+    if js.filename != ""
+        buttons = Ref{UInt8}()
+        if @ccall(ioctl(js.fd::Cint, JSIOCGBUTTONS::Culong; buttons::Ref{UInt8})::Cint) == -1
+            return -1
+        end
+        Int64(buttons[])
+    else
+        return js.button_count
     end
-    Int64(buttons[])
 end
 
 function read_event(js::JSDevice)
+    @assert js.filename != ""
     event = Vector{UInt8}(undef, sizeof(JSEvent))
     res = ccall(:read, Cssize_t, (Cint, Ptr{Cuchar}, Csize_t), js.fd, event, sizeof(JSEvent))
     if res == -1    
