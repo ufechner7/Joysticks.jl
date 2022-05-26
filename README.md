@@ -1,7 +1,6 @@
 # Joysticks
 
-Joystick drivers for Julia, for now only on Linux. Contributions
-for Windows and Mac welcome!
+Joystick drivers for Julia, tested on Linux and Windows, should also work on Mac.
 
 ## Installation
 ```julia
