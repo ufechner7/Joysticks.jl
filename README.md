@@ -48,7 +48,7 @@ end
 ```
 The struct jsbuttons contains 12 observables, one for each possible button. 
 Using the function `on` can be used to bind an action to a change of the
-button state. When pressed `val` is true, when release `val` is false.
+button state. When pressed `val` is true, when released `val` is false.
 
 The function `async_read!` must be called once to start the
 event loop for processing button events.
